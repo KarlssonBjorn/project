@@ -5,8 +5,8 @@ import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.*;
 
-import model.secretStuff.MailSecrets;
-import model.secretStuff.PaypalSecrets;
+import secretStuff.MailSecrets;
+import secretStuff.PaypalSecrets;
 
 public class Email{
 

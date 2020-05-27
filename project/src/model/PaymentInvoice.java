@@ -21,7 +21,7 @@ import com.paypal.base.rest.PayPalRESTException;
 import model.database.CustomerDatabase;
 import model.database.OrderDatabase;
 import model.database.ServiceDatabase;
-import model.secretStuff.PaypalSecrets;
+import secretStuff.PaypalSecrets;
 
 public class PaymentInvoice {
 	private PaypalSecrets secret;

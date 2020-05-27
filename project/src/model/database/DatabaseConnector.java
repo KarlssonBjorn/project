@@ -3,7 +3,7 @@ package model.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-import model.secretStuff.DatabaseSecrets;
+import secretStuff.DatabaseSecrets;
 
 /**
  * A interface that handles connection to the MySQL database.
