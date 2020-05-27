@@ -56,7 +56,7 @@ public class CustomerController {
     public String deleteCustomer(int id, String name) {
         boolean isDeleted = customerDatabase.deleteCustomer(id);
 
-        if (isDeleted) return name + " Deleted!";
+        if (isDeleted) return name + " Deleted!"; // TODO: Maybe remove the name argument? It only adds cosmetics.
         return "ops, something went wrong!";
     }
 
@@ -70,6 +70,7 @@ public class CustomerController {
      * @param id The ID of the old Customer.
      * @return String
      */
+    // TODO No company argument?
     
     public String editCustomer(String name, String email, String phone, String address, boolean isActive, int id) {
     	String inputCheck = inputValidator.validateCustomerInput(name, email, phone, address, id);

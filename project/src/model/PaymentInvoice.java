@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import com.paypal.api.payments.BillingInfo;
@@ -18,10 +17,7 @@ import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.JSONFormatter;
 import com.paypal.base.rest.PayPalRESTException;
 
-import model.database.CustomerDatabase;
-import model.database.OrderDatabase;
-import model.database.ServiceDatabase;
-import model.secretStuff.PaypalSecrets;
+import secretStuff.PaypalSecrets;
 
 public class PaymentInvoice {
 	private PaypalSecrets secret;
@@ -31,11 +27,8 @@ public class PaymentInvoice {
 	private BillingInfo billInfo;
 	private Currency cur;
 	private InvoiceItem item;
-	private OrderDatabase data;
-	private CustomerDatabase customerData;
-	private ServiceDatabase serviceData;
-	private int customerID;
-	private int serviceID;
+
+
 
 	public PaymentInvoice() {
 		secret = new PaypalSecrets();
@@ -44,35 +37,26 @@ public class PaymentInvoice {
 		billInfo = new BillingInfo();
 		cur = new Currency();
 		item = new InvoiceItem();
-		data = new OrderDatabase();
-		customerData = new CustomerDatabase();
-		serviceData = new ServiceDatabase();
 	}
 
 	// TODO remove get merchant from everyone
-	public Invoice create(int orderId) {
+	public Invoice create(String serviceName, double orderPrice, String customerName) {
 		instance = loadInvoice();
-		customerID = data.getOrderById(orderId).getCustomerId();
-		serviceID = data.getOrderById(orderId).getServiceId();
 
-		try {
-			item.setName(serviceData.getServiceById(serviceID).getTitle());
-		} catch (SQLException e) {
-			System.out.println("Error: " + e.getMessage() + "\nError Code: " + e.getErrorCode());
-		}
+		item.setName(serviceName);
 		item.setQuantity(1);
 		cur.setCurrency("USD");
 		
-		cur.setValue("" + data.getOrderById(orderId).getPrice());
+		cur.setValue("" + orderPrice);
 		item.setUnitPrice(cur);
 
 		ArrayList<BillingInfo> billing = new ArrayList<BillingInfo>();
 		ArrayList<InvoiceItem> items = new ArrayList<InvoiceItem>();
 		items.add(item);
-		ship.setFirstName(customerData.getCustomerById(customerID).getName());
+		ship.setFirstName(customerName);
 		ship.setLastName("");
 
-		billInfo.setFirstName(customerData.getCustomerById(customerID).getName());
+		billInfo.setFirstName(customerName);
 		billInfo.setLastName("");
 		billInfo.setEmail("sb-433qpa1863507@personal.example.com");
 		billing.add(billInfo);
@@ -87,7 +71,6 @@ public class PaymentInvoice {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		data.setPayPalInvoiceID(orderId, instance.getId());
 
 		System.out.println("create response:\n" + Invoice.getLastResponse());
 		return instance;

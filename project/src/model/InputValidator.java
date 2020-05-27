@@ -6,20 +6,6 @@ package model;
 
 public class InputValidator {
 	
-	public String validateOrderInput(int customerId, int serviceId, String date, int shopId, String company, double price) {
-		
-		if (customerId <= 0) return "Customer Id is invalid!";
-        else if (serviceId <= 0) return "Service Id is invalid!";
-        else if(date.equalsIgnoreCase("")) return "Not a valid date!";
-        else if (shopId <= 0) return "Shop Id is invalid!";
-        else if(company.equalsIgnoreCase("")) return "Not a valid company!";
-        else if (price == -1 ) return "Price is invalid!"; // make sure to pass in -1 if price is missing
-		
-		return "";
-	}
-	
-	
-	
 	/**
 	 * Validates that the information entered is enough to create a Service.
 	 * @param companyName

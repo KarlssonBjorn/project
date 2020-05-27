@@ -106,7 +106,7 @@ class EmployeeDatabaseUnitTests {
 		
 		// This is hard to test due to password implmentation havent been done yet.
 		
-		assertTrue(db.validateEmployee(user1.getEmail(), "correct_password") == user1);
+		assertTrue(db.validateEmployee(user1.getEmail(), "correct_password"));
 	}
 	
 	

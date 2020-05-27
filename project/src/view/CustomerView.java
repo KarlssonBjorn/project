@@ -1,5 +1,6 @@
 package view;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import controller.CustomerController;
@@ -11,9 +12,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -44,13 +42,10 @@ public class CustomerView {
 		setList();
 		
 		BorderPane bp = new BorderPane();
-		Button createButton = new Button();
-		createButton.setGraphic(new ImageView(new Image("view/images/create.png")));
-		createButton.setTooltip(new Tooltip("Create new customer"));
+		Button createButton = new Button("Create");
 		
 		createButton.setOnAction(e -> create());
 		
-		bp.getStylesheets().add("view/css/list-buttons.css");
 		lv = new ListView<Cell>();
 		obsList = FXCollections.observableList(list);
 		lv.setItems(obsList);
@@ -181,8 +176,8 @@ public class CustomerView {
 		Label phoneLabel = new Label();
 		Label nameLabel = new Label();
 		Label emailLabel = new Label();
-		Button editButton = new Button();
-		Button removeButton = new Button();
+		Button editButton = new Button("Edit");
+		Button removeButton = new Button("Remove");
 		int id;
 		String name;
 		String email;
@@ -198,22 +193,20 @@ public class CustomerView {
 			this.id = id;
 			
 			this.name = name;
-			nameLabel.setText("" + name);
+			nameLabel.setText("Name: " + name);
 			nameLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(nameLabel, Priority.ALWAYS);
 			
 			this.phone = phone;
-			phoneLabel.setText("" + phone);
+			phoneLabel.setText("Phone: " + phone);
 			phoneLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(phoneLabel, Priority.ALWAYS);
 			
 			this.email = email;
-			emailLabel.setText("" + email);
+			emailLabel.setText("Email: " + email);
 			emailLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(emailLabel, Priority.ALWAYS);
 			
-			editButton.setGraphic(new ImageView(new Image("view/images/edit.png")));
-			editButton.setTooltip(new Tooltip("Edit " + name));
 			editButton.setOnAction(e -> {
 				if (loggedInUser.getStatus().equalsIgnoreCase("super_admin") || loggedInUser.getStatus().equalsIgnoreCase("admin"))
 					edit(this);
@@ -221,8 +214,6 @@ public class CustomerView {
 					Popup.displayErrorMessage("You do not have permission to edit customers");
 			});
 			
-			removeButton.setGraphic(new ImageView(new Image("view/images/remove.png")));
-			removeButton.setTooltip(new Tooltip("Remove " + name));
 			removeButton.setOnAction(e -> {
 				if (loggedInUser.getStatus().equalsIgnoreCase("super_admin"))
 					remove(this);

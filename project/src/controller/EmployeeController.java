@@ -25,7 +25,6 @@ public class EmployeeController {
 	
 	public EmployeeController() {
 		employeeDatabase = new EmployeeDatabase();
-		
 		inputValidator = new InputValidator();
 	}
 	
@@ -35,16 +34,12 @@ public class EmployeeController {
 	 */
 	
 	public String newSuperAdmin(String name, String email, String phone, String password, String company) {
-		String inputCheck = inputValidator.validateEmployeeInput(name, email, phone, password, company, 1, 1); // id as stub
-
-    	if (!inputCheck.equalsIgnoreCase("")) return inputCheck;
-		
 		Employee superAdmin = new SuperAdmin();
 		superAdmin.setEmail(email);
 		superAdmin.setCompanyName(company);
 		superAdmin.setName(name);
 		superAdmin.setPhone(phone);
-		String hashedPassword = PasswordHasher.hashPassword(password);
+		String hashedPassword = PasswordHasher.hashPassword(password); // TODO hashedPassword never used?
 		superAdmin.setPassword(hashedPassword); 
 		superAdmin.setStatus("Super_Admin");
 		boolean isSaved = employeeDatabase.saveEmployee(superAdmin);

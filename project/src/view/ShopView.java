@@ -1,5 +1,6 @@
 package view;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import controller.ShopController;
@@ -8,13 +9,10 @@ import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -45,9 +43,7 @@ public class ShopView {
 		setList();
 		
 		BorderPane bp = new BorderPane();
-		Button createButton = new Button();
-		createButton.setGraphic(new ImageView(new Image("view/images/create.png")));
-		createButton.setTooltip(new Tooltip("Create new order"));
+		Button createButton = new Button("Create");
 		
 		createButton.setOnAction(e -> {
 				if (Employee.getLoggedInUser().getStatus().equalsIgnoreCase("super_admin"))
@@ -55,8 +51,6 @@ public class ShopView {
 				else
 					Popup.displayErrorMessage("You do not have permission to create shops!");
 		});
-		
-		bp.getStylesheets().add("view/css/list-buttons.css");
 		
 		lv = new ListView<Cell>();
 		obsList = FXCollections.observableList(list);
@@ -205,16 +199,14 @@ public class ShopView {
 			this.address = address;
 			this.name = name;
 			
-			nameLabel.setText("" + name);
+			nameLabel.setText("Name: " + name);
 			nameLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(nameLabel, Priority.ALWAYS);
 			
-			addressLabel.setText("" + address);
+			addressLabel.setText("Address: " + address);
 			addressLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(addressLabel, Priority.ALWAYS);
 			
-			editButton.setGraphic(new ImageView(new Image("view/images/edit.png")));
-			editButton.setTooltip(new Tooltip("Edit " + name));
 			editButton.setOnAction(e -> {
 				if (loggedInUser.getStatus().equalsIgnoreCase("super_admin"))
 					edit(this);
@@ -222,8 +214,6 @@ public class ShopView {
 					Popup.displayErrorMessage("You do not have permission to edit shops!");
 			});
 			
-			removeButton.setGraphic(new ImageView(new Image("view/images/remove.png")));
-			removeButton.setTooltip(new Tooltip("Remove " + name));
 			removeButton.setOnAction(e -> {
 				if (loggedInUser.getStatus().equalsIgnoreCase("super_admin"))
 					remove(this);

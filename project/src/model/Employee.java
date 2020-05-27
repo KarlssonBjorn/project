@@ -3,6 +3,7 @@ package model;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -87,7 +88,7 @@ public abstract class Employee implements Serializable {
 		}
 	}
 	
-	public Employee() { this.status = ""; } 
+	public Employee() { this.status = ""; } // TODO: Not sure where this is used. Remove comment if its useful.
 	
 	/**
 	 * Creates a new Order.
@@ -111,6 +112,10 @@ public abstract class Employee implements Serializable {
         order.setCompleted(false);
         
         return order;
+	}
+	
+	public int removeOrder(String id) {
+		return -1; // TODO Not implemented
 	}
 	
 	/**
@@ -154,6 +159,8 @@ public abstract class Employee implements Serializable {
         
         return customer;
 	}
+	
+	public int removeCustomer(String id) { return -1; } // TODO not implemented
 	
 	/**
 	 * Edits a Customer

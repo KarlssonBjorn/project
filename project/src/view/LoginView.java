@@ -1,14 +1,14 @@
 package view;
 
+import java.io.IOException;
+
 import controller.EmployeeController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -16,10 +16,6 @@ import javafx.scene.image.Image;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import model.Employee;
 import security.PasswordHasher;
@@ -29,9 +25,6 @@ public class LoginView {
 	private Stage window = null;
 	private EmployeeController employeeController;
 	private MainView mainView;
-	
-	private final int WIDTH = 400;
-	private final int HEIGHT = 300;
 	
 	public LoginView() {
 		employeeController = new EmployeeController();
@@ -46,12 +39,10 @@ public class LoginView {
 		pane.setHgap(10);
 		pane.setVgap(10);
 		pane.setPadding(new Insets(25,25,25,25));
-		pane.setMinHeight(HEIGHT);
-		pane.setMinWidth(WIDTH);
-		pane.setMaxHeight(HEIGHT);
-		pane.setMaxWidth(WIDTH);
+		pane.setMinHeight(900);
+		pane.setMinWidth(1800);
 		
-		Label username = new Label("Email");
+		Label username = new Label("Username");
 		pane.add(username, 0, 1);
 		
 		TextField usernameField = new TextField();
@@ -66,27 +57,29 @@ public class LoginView {
 		Button loginButton = new Button();
 		loginButton.setText("Login");
 	
-		Hyperlink registerButton = new Hyperlink("Register account.");
-		TextFlow flow = new TextFlow(
-			    new Text("Don't have an account? "), registerButton
-			);
 		
-		HBox.setHgrow(loginButton, Priority.ALWAYS);
-		loginButton.prefWidthProperty().bind(pane.widthProperty().multiply(.8));
-		loginButton.getStylesheets().add("view/css/login-button.css");
-		pane.add(loginButton, 0, 5);
-		pane.add(flow, 0, 6);
+		Button registerButton = new Button();
+		registerButton.setText("Register");
+		
+		HBox boxButtons = new HBox();
+		
+		Button[] buttons = new Button[2];
+		buttons[0] = loginButton;
+		buttons[1] = registerButton;
+		HBox.setMargin(buttons[1], new Insets(0,0,0,50));
+		boxButtons.getChildren().addAll(buttons);
+		pane.add(boxButtons, 0, 5);
 		
 		CheckBox isSuperAdmin = new CheckBox();
 		isSuperAdmin.setText("Are you SuperAdmin?");
-		pane.add(isSuperAdmin, 0, 7);
+		pane.add(isSuperAdmin, 0, 6);
 		
 		Employee test;
 			test = Employee.getLoggedInUser();
 			if (test != null) {
 				usernameField.setText(test.getEmail());
 			}
-			loginButton.setOnAction(e -> {
+			buttons[0].setOnAction(e -> {
 				
 				Employee employee = employeeController.login(usernameField.getText(), PasswordHasher.hashPassword(passwordField.getText()), isSuperAdmin.isSelected());
 				if(employee != null) {
@@ -102,15 +95,12 @@ public class LoginView {
 					
 			});
 		
-		registerButton.setOnAction(e -> {
-			new RegisterView().render();
+		buttons[1].setOnAction(e -> {
+			new RegisterView().render(stage);
 		});
 		
 		Scene scene = new Scene(pane);
 		
-		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-	    window.setX((screenBounds.getWidth() - WIDTH) / 2); 
-	    window.setY((screenBounds.getHeight() - HEIGHT) / 2); 
 		
 		window.setScene(scene);
 	    window.setMaximized(false);
