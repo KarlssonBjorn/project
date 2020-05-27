@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="lib/gson-2.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/rest-api-sdk-1.14.0.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.21.jar"/>
+	<classpathentry kind="lib" path="lib/mockito-core-3.3.11.jar"/>
 	<classpathentry kind="output" path="project/bin"/>
 </classpath>

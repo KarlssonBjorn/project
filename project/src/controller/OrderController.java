@@ -15,6 +15,7 @@ import model.PaymentInvoice;
 import model.User;
 import model.database.CustomerDatabase;
 import model.database.OrderDatabase;
+import model.database.ServiceDatabase;
 
 /**
  *  Handles calls from View to Model which concerns any calls to the Order class.
@@ -23,6 +24,8 @@ import model.database.OrderDatabase;
 public class OrderController {
 
     OrderDatabase orderDatabase;
+    ServiceDatabase sd = new ServiceDatabase();
+	CustomerDatabase CD = new CustomerDatabase();
     PaymentInvoice invoice;
 
     /**
@@ -31,6 +34,8 @@ public class OrderController {
     
 	public OrderController() {
 		orderDatabase = new OrderDatabase();
+		sd = new ServiceDatabase();
+		CD = new CustomerDatabase();
 		invoice = new PaymentInvoice();
 	}
 
@@ -153,7 +158,14 @@ public class OrderController {
 
 	public void sendInvoice(int id) {
 		new Thread(() ->{
-			invoice.create(id);
+			int serviceId = orderDatabase.getOrderById(id).getServiceId();
+			int customerId = orderDatabase.getOrderById(id).getCustomerId();
+			try {
+				orderDatabase.setPayPalInvoiceID(id, invoice.create(sd.getServiceById(serviceId).getTitle(), orderDatabase.getOrderById(id).getPrice(), CD.getCustomerById(customerId).getName()).getId());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
 			invoice.send();
 			sendOrderCompleteMail(id);
 		}).start();
@@ -164,7 +176,6 @@ public class OrderController {
 			try {
 				invoice.cancel(invoice.retrieveInvoice(orderDatabase.getOrderById(id).getPaypalID()));
 			} catch (PayPalRESTException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}).start();
@@ -173,7 +184,6 @@ public class OrderController {
 	public void sendOrderCompleteMail(int orderID) {
 
 		Email email = new Email();
-		CustomerDatabase CD = new CustomerDatabase();
 		Customer customer = CD.getCustomerById(orderDatabase.getOrderById(orderID).getCustomerId());
 		email.createLink(orderDatabase.getOrderById(orderID).getPaypalID());
 		email.sendMail(customer.getEmail(), orderID);
@@ -182,9 +192,8 @@ public class OrderController {
 	public boolean isEmailValid(int id) {
 
 		Email email = new Email();
-		CustomerDatabase customerDatabase = new CustomerDatabase();
 		Order order = orderDatabase.getOrderById(id);
-		Customer customer = customerDatabase.getCustomerById(order.getCustomerId());
+		Customer customer = CD.getCustomerById(order.getCustomerId());
 		if (email.validateEmail(customer.getEmail())) {
 			return true;
 		} else {

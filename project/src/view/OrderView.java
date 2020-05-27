@@ -27,7 +27,7 @@ import model.Employee;
 import model.Order;
 import model.Service;
 
-public class OrderView {
+public class OrderView{
 	
 	private ArrayList<Cell> uncompList;
 	private ArrayList<Cell> compList;
