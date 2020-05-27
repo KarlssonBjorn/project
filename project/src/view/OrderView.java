@@ -27,7 +27,7 @@ import model.Employee;
 import model.Order;
 import model.Service;
 
-public class OrderView {
+public class OrderView{
 	
 	private ArrayList<Cell> uncompList;
 	private ArrayList<Cell> compList;
@@ -80,8 +80,6 @@ public class OrderView {
 		
 		uncompLv.prefWidthProperty().bind(window.widthProperty().multiply(.495));
 		compLv.prefWidthProperty().bind(window.widthProperty().multiply(.495));
-		
-		bp.getStylesheets().add("view/css/list-buttons.css");
 		
 		bp.setTop(createButton);
 		bp.setLeft(uncompLv);
@@ -154,10 +152,7 @@ public class OrderView {
 			String date = this.getTodaysDate();
 			int shopId = loggedInUser.getShopId();
 			String companyName = loggedInUser.getCompanyName();
-			double price = -1;
-			String priceStr = priceField.getText();
-			if(priceStr.length() != 0)
-				price = Double.parseDouble(priceField.getText());
+			double price = Double.parseDouble(priceField.getText());
 			
 			uncompLv.refresh();
 			compLv.refresh();
@@ -267,8 +262,8 @@ public class OrderView {
 		Label customerLabel = new Label();
 		Label priceLabel = new Label();
 		Label dateLabel = new Label();
-		Button editButton = new Button();
-		Button removeButton = new Button();
+		Button editButton = new Button("Edit");
+		Button removeButton = new Button("Remove");
 		Button completeButton = new Button();
 		int customerId;
 		double price;
@@ -294,22 +289,22 @@ public class OrderView {
 				this.paidStatus = "UNPAID";
 			else
 				this.paidStatus = paidStatus;
-			paidStatusLabel.setText("" + this.paidStatus);
+			paidStatusLabel.setText("Pay Status: " + this.paidStatus);
 			paidStatusLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(paidStatusLabel, Priority.ALWAYS);
 			
 			this.customerId = customerId;
-			customerLabel.setText("" + customerId);
+			customerLabel.setText("Customer id: " + customerId);
 			customerLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(customerLabel, Priority.ALWAYS);
 			
 			this.price = price;
-			priceLabel.setText("$" + price);
+			priceLabel.setText("Price: $" + price);
 			priceLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(priceLabel, Priority.ALWAYS);
 			
 			this.date = date;
-			dateLabel.setText("" + date);
+			dateLabel.setText("Date: " + date);
 			dateLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(dateLabel, Priority.ALWAYS);
 			
@@ -317,6 +312,7 @@ public class OrderView {
 			if(completed) {
 				completeButton.setGraphic(new ImageView(new Image("view/images/uncomplete.png")));
 				completeButton.setTooltip(new Tooltip("Uncomplete " + id));
+				completeButton.setText("Uncomplete");
 				completeButton.setOnAction(e -> {
 					String message = orderController.setOrderToUnCompleted(id, this.paidStatus);
 					
@@ -335,6 +331,7 @@ public class OrderView {
 			} else {
 				completeButton.setGraphic(new ImageView(new Image("view/images/complete.png")));
 				completeButton.setTooltip(new Tooltip("Complete " + id));
+				completeButton.setText("Complete");
 				completeButton.setOnAction(e -> {
 					if(!orderController.isEmailValid(id)){
                         Popup.displayErrorMessage("Invalid email!");

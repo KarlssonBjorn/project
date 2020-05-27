@@ -1,16 +1,14 @@
 package view;
 
-
 import javafx.geometry.Orientation;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class MainView {
@@ -116,13 +114,9 @@ public class MainView {
 		pane.setTop(toolBarH);
 		Scene scene = new Scene(pane, WIDTH, HEIGHT);
 		
-		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-	    window.setX((screenBounds.getWidth() - WIDTH) / 2); 
-	    window.setY((screenBounds.getHeight() - HEIGHT) / 2); 
-		
 		window.setScene(scene);
 	    window.setMaximized(false);
-	    window.setTitle("Service Application");	    
+	    window.setTitle("Service Application");
 	    window.show();
 	}
 }

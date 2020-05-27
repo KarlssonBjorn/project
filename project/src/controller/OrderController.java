@@ -1,17 +1,21 @@
 package controller;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
 
+import com.paypal.api.payments.Invoice;
 import com.paypal.base.rest.PayPalRESTException;
 
 import model.Customer;
 import model.Email;
-import model.InputValidator;
 import model.Order;
 import model.PaymentInvoice;
 import model.User;
 import model.database.CustomerDatabase;
 import model.database.OrderDatabase;
+import model.database.ServiceDatabase;
 
 /**
  *  Handles calls from View to Model which concerns any calls to the Order class.
@@ -20,8 +24,9 @@ import model.database.OrderDatabase;
 public class OrderController {
 
     OrderDatabase orderDatabase;
+    ServiceDatabase sd = new ServiceDatabase();
+	CustomerDatabase CD = new CustomerDatabase();
     PaymentInvoice invoice;
-    InputValidator inputValidator;
 
     /**
      * Constructor
@@ -29,8 +34,9 @@ public class OrderController {
     
 	public OrderController() {
 		orderDatabase = new OrderDatabase();
+		sd = new ServiceDatabase();
+		CD = new CustomerDatabase();
 		invoice = new PaymentInvoice();
-		inputValidator = new InputValidator();
 	}
 
     /**
@@ -45,11 +51,18 @@ public class OrderController {
      */
     
     public String newOrder(int customerId, int serviceId, String date, int shopId, String company, double price) {
+    	
+    	// TODO Why isn't this in InputValidator?
+        if (customerId <= 0) return "ops, something went wrong!";
+        else if (serviceId <= 0) return "ops, something went wrong!";
+        else if (date.equalsIgnoreCase("")) return "ops, something went wrong!";
+        else if (shopId <= 0) return "ops, something went wrong!";
+        else if (date.equalsIgnoreCase("")) return "ops, something went wrong!";
+        else if (company.equalsIgnoreCase("")) return "ops, something went wrong!";
 
-        String valid = inputValidator.validateOrderInput(customerId, serviceId, date, shopId, company, price);
-        
-        if (!valid.equalsIgnoreCase("")) return valid;
-        
+        // TODO solve price is not set
+        // TODO we need to get it from service, what's the best approach?
+
         User user = new User();
 
         boolean isSaved = orderDatabase.saveOrder(user.createOrder(customerId, serviceId, date, shopId, company, price));
@@ -89,7 +102,7 @@ public class OrderController {
 
         boolean isDeleted = orderDatabase.editOrder(user.editOrder(id, customerId, serviceId, price));
 
-        if (isDeleted) return "Order Edited successfully!";
+        if (isDeleted) return "Order Edited!";
         return "ops, something went wrong!";
     }
     
@@ -138,14 +151,21 @@ public class OrderController {
 		boolean isSetToCompleted = orderDatabase.setOrderToUnCompleted(id);
 
 		if (isSetToCompleted) {
-			return "Order set to uncompleted!";
+			return "Order set to completed!";
 		}
 		return "ops, something went wrong!";
 	}
 
 	public void sendInvoice(int id) {
 		new Thread(() ->{
-			invoice.create(id);
+			int serviceId = orderDatabase.getOrderById(id).getServiceId();
+			int customerId = orderDatabase.getOrderById(id).getCustomerId();
+			try {
+				orderDatabase.setPayPalInvoiceID(id, invoice.create(sd.getServiceById(serviceId).getTitle(), orderDatabase.getOrderById(id).getPrice(), CD.getCustomerById(customerId).getName()).getId());
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
 			invoice.send();
 			sendOrderCompleteMail(id);
 		}).start();
@@ -164,7 +184,6 @@ public class OrderController {
 	public void sendOrderCompleteMail(int orderID) {
 
 		Email email = new Email();
-		CustomerDatabase CD = new CustomerDatabase();
 		Customer customer = CD.getCustomerById(orderDatabase.getOrderById(orderID).getCustomerId());
 		email.createLink(orderDatabase.getOrderById(orderID).getPaypalID());
 		email.sendMail(customer.getEmail(), orderID);
@@ -173,9 +192,8 @@ public class OrderController {
 	public boolean isEmailValid(int id) {
 
 		Email email = new Email();
-		CustomerDatabase customerDatabase = new CustomerDatabase();
 		Order order = orderDatabase.getOrderById(id);
-		Customer customer = customerDatabase.getCustomerById(order.getCustomerId());
+		Customer customer = CD.getCustomerById(order.getCustomerId());
 		if (email.validateEmail(customer.getEmail())) {
 			return true;
 		} else {

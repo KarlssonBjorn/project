@@ -1,28 +1,34 @@
 package view;
 
+import java.util.ArrayList;
+
 import controller.EmployeeController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class RegisterView {
+	private Stage window;
+	private ArrayList<String> list;
 	
-	private final int WIDTH = 300;
-	private final int HEIGHT = 600;
+	public RegisterView() {
+		 list = new ArrayList<String>();
+	}
 	
-	public void render() {
+	public void render(Stage stage) {
+		window = stage;
 		GridPane pane = new GridPane();
-		pane.setMinHeight(HEIGHT);
-		pane.setMinWidth(WIDTH);
+		pane.setMinHeight(900);
+		pane.setMinWidth(1800);
 		pane.setAlignment(Pos.CENTER);
 		pane.setHgap(10);
 		pane.setVgap(10);
@@ -62,14 +68,14 @@ public class RegisterView {
 		Button registerButton = new Button();
 		registerButton.setText("Register");
 		
+		Button backButton = new Button();
+		backButton.setText("Back");
+		
 		
 		HBox boxButtons = new HBox();
-
-		boxButtons.getChildren().add(registerButton);
+		HBox.setMargin(backButton, new Insets(0,0,0,50));
+		boxButtons.getChildren().addAll(registerButton,backButton);
 		pane.add(boxButtons, 0, 13);
-		
-		Scene scene = new Scene(pane, WIDTH, HEIGHT);
-		Stage window = new Stage();
 		
 		registerButton.setOnAction(e -> {
 				if(passwordField.getText().equals(passwordConfirmField.getText())) {
@@ -77,10 +83,8 @@ public class RegisterView {
 					EmployeeController cont = new EmployeeController();
 					String message = cont.newSuperAdmin(nameField.getText(), emailField.getText(), phoneField.getText(), passwordField.getText(), companyField.getText());
 					
-					if (message.contains("successfully")) {
-						window.close();
-						Popup.displaySuccessMessage(message);
-					}
+					if (message.contains("successfully"))
+						new LoginView().render(window);
 					else
 						Popup.displayErrorMessage(message);
 				}
@@ -89,13 +93,27 @@ public class RegisterView {
 				}
 		});
 		
-		Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-	    window.setX((screenBounds.getWidth() - WIDTH) / 2); 
-	    window.setY((screenBounds.getHeight() - HEIGHT) / 2); 
+		
+		backButton.setOnAction(e -> {
+			LoginView log = new LoginView();
+			log.render(window);
+		});
+		
+		Scene scene = new Scene(pane);
 		
 		window.setScene(scene);
 	    window.setMaximized(false);
 	    window.setTitle("Service Application");
 	    window.show();	
+	}
+	
+	private void checkFields(TextField text) {
+		if(text.getText().isEmpty()) {
+			text.getId();
+		}
+		else {
+			
+		}
+			
 	}
 }

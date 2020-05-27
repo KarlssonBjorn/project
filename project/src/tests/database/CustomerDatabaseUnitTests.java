@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLIntegrityConstraintViolationException;
@@ -43,7 +45,7 @@ class CustomerDatabaseUnitTests {
 			this.init();
 		
 			db.saveCustomer(c);
-			assertEquals("TOM", db.getCustomerById(1).getName()); // Checks that the retrieved name is equal to the saved one.
+			assertEquals("TOM", db.getCustomerById("1").getName()); // Checks that the retrieved name is equal to the saved one.
 			db.reset();
 		
 	}
@@ -77,7 +79,7 @@ class CustomerDatabaseUnitTests {
 		db.saveCustomer(c);
 		//db.editCustomer("1", b); TODO NEEDS FIXING
 		
-		assertEquals("JOHN", db.getCustomerById(1).getName());
+		assertEquals("JOHN", db.getCustomerById("1").getName());
 		
 		db.reset();
 	}

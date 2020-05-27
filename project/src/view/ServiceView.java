@@ -1,5 +1,6 @@
 package view;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import controller.ServiceController;
@@ -11,9 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -43,10 +41,10 @@ public class ServiceView {
 		setList();
 		
 		BorderPane bp = new BorderPane();
+		BorderPane center = new BorderPane();
+		center.setTop(getHeader());
 		
-		Button createButton = new Button();
-		createButton.setGraphic(new ImageView(new Image("view/images/create.png")));
-		createButton.setTooltip(new Tooltip("Create new service"));
+		Button createButton = new Button("Create");
 		
 		createButton.setOnAction(e -> {
 			if (loggedInUser.getStatus().equalsIgnoreCase("admin") || loggedInUser.getStatus().equalsIgnoreCase("super_admin"))
@@ -55,13 +53,32 @@ public class ServiceView {
 				Popup.displayErrorMessage("You do not have permission to create services!");
 		});
 	
-		bp.getStylesheets().add("view/css/list-buttons.css");
 		lv = new ListView<Cell>();
 		obsList = FXCollections.observableList(list);
 		lv.setItems(obsList);
-		bp.setCenter(lv);
+		center.setCenter(lv);
+		bp.setCenter(center);
 		bp.setTop(createButton);
 		return bp;
+	}
+	
+	private HBox getHeader() {
+		HBox header = new HBox();
+		Label id = new Label("Id:");
+		Label title = new Label("Title:");
+		Label price = new Label("Price:");
+		Label filler = new Label();
+		id.setMaxWidth(Double.MAX_VALUE);
+		title.setMaxWidth(Double.MAX_VALUE);
+		price.setMaxWidth(Double.MAX_VALUE);
+		filler.setPrefWidth(50);
+		HBox.setHgrow(id, Priority.ALWAYS);
+		HBox.setHgrow(title, Priority.ALWAYS);
+		HBox.setHgrow(price, Priority.ALWAYS);
+		HBox.setHgrow(filler, Priority.ALWAYS);
+		header.getChildren().addAll(id, title, price, filler);
+		header.getStylesheets().add("view/css/header-text.css");
+		return header;
 	}
 	
 	private void setList() {
@@ -97,9 +114,7 @@ public class ServiceView {
 			String companyName = loggedInUser.getCompanyName();
 			String title = titleField.getText();
 			String description = descField.getText();
-			double price = -1;
-			if(priceField.getText().length() != 0)
-				price = Double.parseDouble(priceField.getText());
+			double price = Double.parseDouble(priceField.getText());
 			
 			lv.refresh();
 			window.close();
@@ -175,8 +190,8 @@ public class ServiceView {
 	public class Cell extends HBox {
 		private Label titleLabel = new Label();
 		private Label priceLabel = new Label();
-		private Button editButton = new Button();
-		private Button removeButton = new Button();
+		private Button editButton = new Button("Edit");
+		private Button removeButton = new Button("Remove");
 		private int id;
 		private double price;
 		private String title;
@@ -190,17 +205,15 @@ public class ServiceView {
 			this.description = description;
 			
 			this.title = title;
-			titleLabel.setText("" + title);
+			titleLabel.setText("Title: " + title);
 			titleLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(titleLabel, Priority.ALWAYS);
 			
 			this.price = price;
-			priceLabel.setText("" + price);
+			priceLabel.setText("Price: $" + price);
 			priceLabel.setMaxWidth(Double.MAX_VALUE);
 			HBox.setHgrow(priceLabel, Priority.ALWAYS);
 			
-			editButton.setGraphic(new ImageView(new Image("view/images/edit.png")));
-			editButton.setTooltip(new Tooltip("Edit " + title));
 			editButton.setOnAction(e -> {
 				if (loggedInUser.getStatus().equalsIgnoreCase("admin") || loggedInUser.getStatus().equalsIgnoreCase("super_admin"))
 					edit(this);
@@ -208,8 +221,6 @@ public class ServiceView {
 					Popup.displayErrorMessage("You do not have permission to edit services!");
 			});
 			
-			removeButton.setGraphic(new ImageView(new Image("view/images/remove.png")));
-			removeButton.setTooltip(new Tooltip("Remove " + title));
 			removeButton.setOnAction(e -> {
 				if (loggedInUser.getStatus().equalsIgnoreCase("super_admin"))
 					remove(this);
